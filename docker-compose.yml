@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: fitness_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: fitness_db
+    ports:
+      - "3307:3306" # Updated to bind host port 3307 to container port 3306
+    volumes:
+      - ./db_init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+
+  web:
+    build: ./flask_app
+    container_name: fitness_flask
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=password
+    depends_on:
+      db:
+        condition: service_healthy

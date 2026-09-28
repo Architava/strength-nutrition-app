@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strength & Nutrition Analytics Engine</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --primary: #2563eb;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        header {
+            margin-bottom: 2rem;
+        }
+        h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.75rem;
+        }
+        p.subtitle {
+            margin: 0;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+        .metric-val {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        th, td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f1f5f9;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            margin-bottom: 0.25rem;
+        }
+        input, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Strength & Nutrition Analytics Engine</h1>
+        <p class="subtitle">System Telemetry & Automated Progression Tracking</p>
+    </header>
+    <div class="grid">
+        <div class="card">
+            <h2>Total Sessions</h2>
+            <div class="metric-val" id="metric-sessions">--</div>
+        </div>
+        <div class="card">
+            <h2>Avg Daily Intake</h2>
+            <div class="metric-val" id="metric-calories">-- <span style="font-size:1rem;">kcal</span></div>
+        </div>
+        <div class="card">
+            <h2>Peak Estimated 1RM</h2>
+            <div class="metric-val" id="metric-1rm">--</div>
+            <span id="metric-1rm-sub" style="font-size: 0.85rem; color: var(--text-sub);"></span>
+        </div>
+    </div>
+    <div class="grid">
+        <div class="card">
+            <h2>Log Strength Session</h2>
+            <form id="workout-form">
+                <div class="form-group">
+                    <label for="w-exercise">Exercise Name</label>
+                    <input type="text" id="w-exercise" required placeholder="e.g. Barbell Back Squat">
+                </div>
+                <div class="form-group">
+                    <label for="w-weight">Weight (kg)</label>
+                    <input type="number" step="0.5" id="w-weight" required placeholder="140">
+                </div>
+                <div class="form-group">
+                    <label for="w-reps">Reps</label>
+                    <input type="number" id="w-reps" required placeholder="5">
+                </div>
+                <button type="submit">Save Session</button>
+            </form>
+            
+            <h2 style="margin-top: 2rem;">Log Nutrition (Surplus Target)</h2>
+            <form id="nutrition-form">
+                <div class="form-group">
+                    <label for="n-kcal">Kilocalories</label>
+                    <input type="number" id="n-kcal" required placeholder="3100">
+                </div>
+                <div class="form-group">
+                    <label for="n-protein">Protein (g)</label>
+                    <input type="number" id="n-protein" required placeholder="160">
+                </div>
+                <div class="form-group">
+                    <label for="n-carbs">Carbs (g)</label>
+                    <input type="number" id="n-carbs" required placeholder="400">
+                </div>
+                <div class="form-group">
+                    <label for="n-fats">Fats (g)</label>
+                    <input type="number" id="n-fats" required placeholder="90">
+                </div>
+                <button type="submit">Save Nutrition Log</button>
+            </form>
+        </div>
+        <div class="card">
+            <h2>Recent Strength Logs</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Exercise</th>
+                        <th>Load</th>
+                        <th>Est. 1RM</th>
+                    </tr>
+                </thead>
+                <tbody id="workout-table-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    async function loadDashboard() {
+        const summaryRes = await fetch('/api/v1/analytics/summary');
+        const summaryData = await summaryRes.json();
+        
+        document.getElementById('metric-sessions').innerText = summaryData.total_workout_sessions;
+        document.getElementById('metric-calories').childNodes[0].nodeValue = summaryData.average_daily_kilocalories + ' ';
+        
+        if (summaryData.peak_performance) {
+            document.getElementById('metric-1rm').innerText = summaryData.peak_performance.estimated_1rm + ' kg';
+            document.getElementById('metric-1rm-sub').innerText = `${summaryData.peak_performance.exercise} on ${summaryData.peak_performance.date}`;
+        }
+        
+        const workoutRes = await fetch('/api/v1/workouts');
+        const workoutData = await workoutRes.json();
+        const tbody = document.getElementById('workout-table-body');
+        tbody.innerHTML = '';
+        workoutData.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.log_date}</td>
+                <td>${item.exercise_name}</td>
+                <td>${item.weight_kg} kg × ${item.reps}</td>
+                <td><strong>${item.estimated_1rm} kg</strong></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    document.getElementById('workout-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            exercise: document.getElementById('w-exercise').value,
+            weight_kg: parseFloat(document.getElementById('w-weight').value),
+            reps: parseInt(document.getElementById('w-reps').value)
+        };
+        const res = await fetch('/api/v1/workouts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            document.getElementById('workout-form').reset();
+            loadDashboard();
+        }
+    });
+
+    document.getElementById('nutrition-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+            kilocalories: parseInt(document.getElementById('n-kcal').value),
+            protein_g: parseFloat(document.getElementById('n-protein').value),
+            carbs_g: parseFloat(document.getElementById('n-carbs').value),
+            fats_g: parseFloat(document.getElementById('n-fats').value),
+            is_vegetarian: true
+        };
+        const res = await fetch('/api/v1/nutrition', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            document.getElementById('nutrition-form').reset();
+            loadDashboard();
+        }
+    });
+
+    loadDashboard();
+</script>
+</body>
+</html>
