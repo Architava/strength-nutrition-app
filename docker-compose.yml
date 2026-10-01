@@ -8,9 +8,10 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: fitness_db
     ports:
-      - "3307:3306" # Updated to bind host port 3307 to container port 3306
+      - "3307:3306"
     volumes:
       - ./db_init:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql # <-- Added this line to persist the data
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
@@ -28,3 +29,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+# <-- Added this root block at the very bottom
+volumes:
+  db_data:
